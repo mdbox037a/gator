@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 const configFileName = ".gatorconfig.json"
@@ -14,12 +15,20 @@ type Config struct {
 	CurrentUserName string `json:"current_user_name"`
 }
 
-func Read() (Config, error) {
-	homeDir, err := os.UserHomeDir()
+func (c *Config) SetUser(user string) error {
+	c.CurrentUserName = user
+	err := write(*c)
 	if err != nil {
-		return Config{}, errors.New("Error: could not locate user home directory")
+		return err
 	}
-	configPath := homeDir + configFileName
+	return nil
+}
+
+func Read() (Config, error) {
+	configPath, err := getConfigFilePath()
+	if err != nil {
+		return Config{}, err
+	}
 
 	configFile, err := os.Open(configPath)
 	if err != nil {
@@ -30,6 +39,35 @@ func Read() (Config, error) {
 	cfg := Config{}
 	decoder := json.NewDecoder(configFile)
 	err = decoder.Decode(&cfg)
+	if err != nil {
+		return cfg, fmt.Errorf("Error: failed to decode config file at path %s\n", configPath)
+	}
 
 	return cfg, nil
+}
+
+func getConfigFilePath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", errors.New("Error: could not locate user home directory")
+	}
+	return filepath.Join(homeDir, configFileName), nil
+}
+
+func write(cfg Config) error {
+	newConfig, err := json.MarshalIndent(cfg, "", "	")
+	if err != nil {
+		return errors.New("Error: failed to parse current config in setting new user")
+	}
+
+	configPath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(configPath, newConfig, 0600)
+	if err != nil {
+		return fmt.Errorf("Error: failed to write config to file %s\nDebug: %w\n", configPath, err)
+	}
+
+	return nil
 }
