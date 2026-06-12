@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/mdbox037a/gator/internal/config"
 )
@@ -14,15 +14,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: failed to read config - %v", err)
 	}
+	currentState := state{currentConfig: &currentConfig}
+	commandSet := commands{handlers: make(map[string]func(*state, command) error)}
 
-	err = currentConfig.SetUser(currentUser)
-	if err != nil {
-		log.Fatalf("Error: failed to set user - %v\n", err)
+	commandSet.register("login", handlerLogin)
+	args := os.Args
+	if len(args) < 2 {
+		log.Fatal("Error: no command name provided")
 	}
-
-	currentConfig, err = config.Read()
-	if err != nil {
-		log.Fatalf("Error: failed to read config - %v", err)
+	currentCommand := command{
+		Name: args[1],
+		Args: args[2:],
 	}
-	fmt.Printf("%+v\n", currentConfig)
+	err = commandSet.run(&currentState, currentCommand)
+	if err != nil {
+		log.Fatalf("Error: failed to run command - %v", err)
+	}
 }

@@ -10,11 +10,11 @@ func handlerLogin(s *state, cmd command) error {
 		return errors.New("Error: please provide username")
 	}
 
-	err := s.CurrentConfig.SetUser(cmd.Args[0])
+	err := s.currentConfig.SetUser(cmd.Args[0])
 	if err != nil {
 		return fmt.Errorf("Error: failed to set username - %v", err)
 	}
 
-	fmt.Print("Info: username set successfully")
+	fmt.Println("Info: username set successfully")
 	return nil
 }

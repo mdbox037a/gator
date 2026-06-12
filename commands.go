@@ -7,7 +7,7 @@ import (
 )
 
 type state struct {
-	CurrentConfig *config.Config
+	currentConfig *config.Config
 }
 
 type command struct {
