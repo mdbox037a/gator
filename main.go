@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -32,5 +33,6 @@ func main() {
 		log.Fatalf("Error: failed to run command - %v", err)
 	}
 
-	fmt.Printf("Debug: resulting program state: %+v\n", currentConfig)
+	debugConfig, err := json.MarshalIndent(currentConfig, "", "    ")
+	fmt.Printf("Debug: resulting program state:\n%s\n", string(debugConfig))
 }
