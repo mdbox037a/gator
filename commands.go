@@ -5,10 +5,10 @@ import (
 )
 
 type state struct {
-	cfg *config.Config
+	CurrentConfig *config.Config
 }
 
 type command struct {
-	name string
-	args []string
+	Name string
+	Args []string
 }
