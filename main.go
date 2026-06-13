@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/mdbox037a/gator/internal/config"
+
+	_ "github.com/lib/pq"
 )
 
 const currentUser string = "matt"
