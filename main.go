@@ -1,12 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/mdbox037a/gator/internal/config"
+	"github.com/mdbox037a/gator/internal/database"
 
 	_ "github.com/lib/pq"
 )
@@ -18,7 +20,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: failed to read config - %v", err)
 	}
-	currentState := state{currentConfig: &currentConfig}
+
+	db, err := sql.Open("postgres", currentConfig.DbURL)
+	if err != nil {
+		log.Fatalf("Error: failed to open database connection at %v", err)
+	}
+	dbQueries := database.New(db)
+
+	currentState := state{db: dbQueries, currentConfig: &currentConfig}
 	commandSet := commands{handlers: make(map[string]func(*state, command) error)}
 
 	commandSet.register("login", handlerLogin)
