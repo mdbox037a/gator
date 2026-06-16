@@ -31,6 +31,7 @@ func main() {
 	commandSet := commands{handlers: make(map[string]func(*state, command) error)}
 
 	commandSet.register("login", handlerLogin)
+	commandSet.register("register", handlerRegister)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatal("Error: no command name provided")

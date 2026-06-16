@@ -47,7 +47,7 @@ func handlerRegister(s *state, cmd command) error {
 	if err != nil {
 		fmt.Printf("Warning: failed to marshal user info for debugging")
 	}
-	fmt.Printf("Info: user %s successfully created")
+	fmt.Printf("Info: user %s successfully created", user.Name)
 	fmt.Printf("Debug: new user info: \n%s\n", string(debugUserInfo))
 
 	return nil
