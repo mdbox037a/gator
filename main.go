@@ -32,6 +32,7 @@ func main() {
 
 	commandSet.register("login", handlerLogin)
 	commandSet.register("register", handlerRegister)
+	commandSet.register("deleteUsers", handlerReset)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatal("Error: no command name provided")
