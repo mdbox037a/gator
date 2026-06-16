@@ -2,8 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
-	"fmt"
+	// "encoding/json"
+	// "fmt"
 	"log"
 	"os"
 
@@ -12,8 +12,6 @@ import (
 
 	_ "github.com/lib/pq"
 )
-
-const currentUser string = "matt"
 
 func main() {
 	currentConfig, err := config.Read()
@@ -33,6 +31,7 @@ func main() {
 	commandSet.register("login", handlerLogin)
 	commandSet.register("register", handlerRegister)
 	commandSet.register("reset", handlerReset)
+	commandSet.register("users", handlerUsers)
 
 	args := os.Args
 	if len(args) < 2 {
@@ -47,6 +46,6 @@ func main() {
 		log.Fatalf("Error: failed to run command - %v", err)
 	}
 
-	debugConfig, err := json.MarshalIndent(currentConfig, "", "    ")
-	fmt.Printf("Debug: current .gatorconfig contents:\n%s\n", string(debugConfig))
+	// debugConfig, err := json.MarshalIndent(currentConfig, "", "    ")
+	// fmt.Printf("Debug: current .gatorconfig contents:\n%s\n", string(debugConfig))
 }
