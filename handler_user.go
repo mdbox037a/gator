@@ -52,6 +52,11 @@ func handlerRegister(s *state, cmd command) error {
 		return fmt.Errorf("Error: failed to add user to database %s - %v", userArgs.Name, err)
 	}
 
+	err = s.currentConfig.SetUser(cmd.Args[0])
+	if err != nil {
+		return fmt.Errorf("Error: failed to set username - %v", err)
+	}
+
 	debugUserInfo, err := json.MarshalIndent(user, "", "    ")
 	if err != nil {
 		fmt.Printf("Warning: failed to marshal user info for debugging")
