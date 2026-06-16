@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,7 +17,16 @@ func handlerLogin(s *state, cmd command) error {
 		return errors.New("Error: please provide username")
 	}
 
-	err := s.currentConfig.SetUser(cmd.Args[0])
+	ctx := context.Background()
+	_, err := s.db.GetUser(ctx, cmd.Args[0])
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("Error: user %s not found in database; please try again or register new user", cmd.Args[0])
+		}
+		return errors.New("Error: failed to query database")
+	}
+
+	err = s.currentConfig.SetUser(cmd.Args[0])
 	if err != nil {
 		return fmt.Errorf("Error: failed to set username - %v", err)
 	}
