@@ -65,3 +65,21 @@ func handlerRegister(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerUsers(s *state, cmd command) error {
+	ctx := context.Background()
+	var users []string
+	users, err := s.db.GetUsers(ctx)
+	if err != nil {
+		return fmt.Errorf("Error: failed to read users list from database - %v", err)
+	}
+	current := s.currentConfig.CurrentUserName
+
+	for _, user := range users {
+		if user == current {
+			fmt.Printf("* %s (current)\n", user)
+		}
+		fmt.Printf("* %s\n", user)
+	}
+	return nil
+}
