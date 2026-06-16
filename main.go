@@ -32,7 +32,8 @@ func main() {
 
 	commandSet.register("login", handlerLogin)
 	commandSet.register("register", handlerRegister)
-	commandSet.register("deleteUsers", handlerReset)
+	commandSet.register("reset", handlerReset)
+
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatal("Error: no command name provided")
@@ -47,5 +48,5 @@ func main() {
 	}
 
 	debugConfig, err := json.MarshalIndent(currentConfig, "", "    ")
-	fmt.Printf("Debug: resulting program state:\n%s\n", string(debugConfig))
+	fmt.Printf("Debug: current .gatorconfig contents:\n%s\n", string(debugConfig))
 }
