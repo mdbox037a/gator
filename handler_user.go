@@ -78,8 +78,9 @@ func handlerUsers(s *state, cmd command) error {
 	for _, user := range users {
 		if user == current {
 			fmt.Printf("* %s (current)\n", user)
+		} else {
+			fmt.Printf("* %s\n", user)
 		}
-		fmt.Printf("* %s\n", user)
 	}
 	return nil
 }
