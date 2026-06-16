@@ -49,9 +49,12 @@ func handlerRegister(s *state, cmd command) error {
 	}
 	user, err := s.db.CreateUser(ctx, userArgs)
 	if err != nil {
-		return fmt.Errorf("Error: failed to create user %s - %v", userArgs.Name, err)
+		return fmt.Errorf("Error: failed to add user to database %s - %v", userArgs.Name, err)
 	}
-	s.currentConfig.CurrentUserName = user.Name
+	err = s.currentConfig.SetUser(cmd.Args[0])
+	if err != nil {
+		return fmt.Errorf("Error: failed to set username in gatorconfig - %v", err)
+	}
 
 	debugUserInfo, err := json.MarshalIndent(user, "", "    ")
 	if err != nil {
