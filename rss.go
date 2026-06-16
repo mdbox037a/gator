@@ -1,6 +1,10 @@
 package main
 
-import "context"
+import (
+	"context"
+	"fmt"
+	"net/http"
+)
 
 type RSSFeed struct {
 	Channel struct {
@@ -18,4 +22,11 @@ type RSSItem struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {}
+func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
+	if err != nil {
+		return fmt.Errorf("Error: GET request failed to %s", feedURL)
+	}
+
+}
