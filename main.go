@@ -33,6 +33,7 @@ func main() {
 	commandSet.register("reset", handlerReset)
 	commandSet.register("users", handlerUsers)
 	commandSet.register("agg", handlerAgg)
+	commandSet.register("addfeed", handlerAddFeed)
 
 	args := os.Args
 	if len(args) < 2 {
