@@ -10,5 +10,10 @@ VALUES (
 )
 RETURNING *;
 
+
 -- name: GetFeeds :many
-SELECT * FROM feeds;
+SELECT f.name, f.url, u.name AS "created_by"
+FROM feeds AS f
+JOIN
+  users AS u
+  ON u.id = f.user_id;
