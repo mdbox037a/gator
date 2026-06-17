@@ -11,6 +11,6 @@ func handlerReset(s *state, cmd command) error {
 	if err != nil {
 		return fmt.Errorf("Error: failed to reset gator users database - %v", err)
 	}
-	fmt.Print("Info: gator users database reset successully")
+	fmt.Println("Info: gator users database reset successully")
 	return nil
 }
