@@ -13,7 +13,7 @@ import (
 	"github.com/mdbox037a/gator/internal/database"
 )
 
-func addFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command) error {
 	if len(cmd.Args) < 2 {
 		return errors.New("Error: please provide a feed name and feed url")
 	}
