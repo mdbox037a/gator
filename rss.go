@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"html"
 	"io"
@@ -29,20 +28,20 @@ type RSSItem struct {
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
 	if err != nil {
-		return nil, errors.New("Error: failed to create request object")
+		return nil, fmt.Errorf("Error: failed to create request object - %v", err)
 	}
 	req.Header.Set("User-Agent", "gator")
 
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("Error: GET request failed to %s", feedURL)
+		return nil, fmt.Errorf("Error: GET request failed to %s - %v", feedURL, err)
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, errors.New("Error: failed to read response body")
+		return nil, fmt.Errorf("Error: failed to read response body - %v", err)
 	}
 	feed := RSSFeed{}
 	err = xml.Unmarshal(body, &feed)
