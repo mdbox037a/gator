@@ -2,7 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/xml"
+	"errors"
 	"fmt"
+	"html"
+	"io"
 	"net/http"
 )
 
@@ -23,10 +27,34 @@ type RSSItem struct {
 }
 
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
-	ctx := context.Background()
 	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
 	if err != nil {
-		return fmt.Errorf("Error: GET request failed to %s", feedURL)
+		return nil, errors.New("Error: failed to create request object")
+	}
+	req.Header.Set("User-Agent", "gator")
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("Error: GET request failed to %s", feedURL)
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, errors.New("Error: failed to read response body")
+	}
+	feed := RSSFeed{}
+	err = xml.Unmarshal(body, &feed)
+
+	// unescape text fields
+	feed.Channel.Title = html.UnescapeString(feed.Channel.Title)
+	feed.Channel.Description = html.UnescapeString(feed.Channel.Description)
+	for i, item := range feed.Channel.Item {
+		item.Title = html.UnescapeString(item.Title)
+		item.Description = html.UnescapeString(item.Description)
+		feed.Channel.Item[i] = item
 	}
 
+	return &feed, nil
 }
