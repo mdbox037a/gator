@@ -48,11 +48,30 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("Error: failed to add feed to database - %v", err)
 	}
 
+	// TODO: maybe create a reusable function to do this struct output
 	feedContents, err := json.MarshalIndent(feed, "", "    ")
 	if err != nil {
 		fmt.Errorf("Error: failed to marshal new RSSFeed contents to print - %v", err)
 	}
 	fmt.Printf("Debug: new RSSFeed contents:\n%s\n", string(feedContents))
+
+	return nil
+}
+
+func handlerFeeds(s *state, cmd command) error {
+	ctx := context.Background()
+	feeds, err := s.db.GetFeeds(ctx)
+	if err != nil {
+		fmt.Errorf("Error: failed to query feeds from database - %v", err)
+	}
+
+	for _, feed := range feeds {
+		feedContents, err := json.MarshalIndent(feed, "", "    ")
+		if err != nil {
+			fmt.Errorf("Error: failed to marshal feed '%s' contents to print - %v", feed.Name, err)
+		}
+		fmt.Printf("feed '%s' contents:\n%s\n", feed.Name, string(feedContents))
+	}
 
 	return nil
 }
