@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
 )
 
@@ -14,7 +14,7 @@ func handlerAgg(s *state, cmd command) error {
 	if err != nil {
 		return fmt.Errorf("Error: failed to retrieve RSS feed from %s - %v", feedURL, err)
 	}
-	feedContents, err := json.MarshalIndent(feed, "", "    ")
+	feedContents, err := xml.MarshalIndent(feed, "", "    ")
 	if err != nil {
 		fmt.Errorf("Error: failed to marshal RSSFeed contents to print - %v", err)
 	}
