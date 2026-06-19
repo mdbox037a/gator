@@ -55,6 +55,13 @@ func handlerAddFeed(s *state, cmd command) error {
 	}
 	fmt.Printf("Debug: new RSSFeed contents:\n%s\n", string(feedContents))
 
+	// auto add user as follower
+	feedFollow, err := followFeed(s, ctx, feedArgs.UserID, feedArgs.ID)
+	if err != nil {
+		return fmt.Errorf("Error: failed to follow feed - %v", err)
+	}
+	fmt.Printf("Info: added user '%s' as follower of feed '%s'\n", s.currentConfig.CurrentUserName, feedFollow.FeedName)
+
 	return nil
 }
 

@@ -27,14 +27,7 @@ func handlerFollow(s *state, cmd command) error {
 	if err != nil {
 		return fmt.Errorf("Error: failed to retrieve feed from database - %v", err)
 	}
-	feedFollowParams := database.CreateFeedFollowParams{
-		ID:        uuid.New(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
-		UserID:    user_id,
-		FeedID:    feed_id,
-	}
-	feedFollow, err := s.db.CreateFeedFollow(ctx, feedFollowParams)
+	feedFollow, err := followFeed(s, ctx, user_id, feed_id)
 	if err != nil {
 		return fmt.Errorf("Error: failed to link user to feed - %v", err)
 	}
@@ -60,4 +53,16 @@ func handlerFollowing(s *state, cmd command) error {
 		fmt.Printf("%s\n", feed.FeedName)
 	}
 	return nil
+}
+
+func followFeed(s *state, ctx context.Context, user_id, feed_id uuid.UUID) (database.CreateFeedFollowRow, error) {
+	feedFollowParams := database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		UserID:    user_id,
+		FeedID:    feed_id,
+	}
+	feedFollow, err := s.db.CreateFeedFollow(ctx, feedFollowParams)
+	return feedFollow, err
 }
