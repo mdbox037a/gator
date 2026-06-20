@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/mdbox037a/gator/internal/database"
 )
 
 const feedURL string = "https://www.wagslane.dev/index.xml"
@@ -42,10 +46,36 @@ func scrapeFeeds(s *state) error {
 		return fmt.Errorf("Error: failed to retrieve RSS feed from %s - %v", feed.Url, err)
 	}
 
+	for _, item := range feedContent.Channel.Item {
+		postData := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now().UTC(),
+			UpdatedAt:   time.Now().UTC(),
+			Title:       item.Title,
+			Url:         feed.Url,
+			Description: item.Description,
+			PublishedAt: item.PubDate,
+			FeedID:      feed.ID,
+		}
+	}
+
+	// debug: printout
 	feedPrintout, err := xml.MarshalIndent(feedContent, "", "    ")
 	if err != nil {
 		fmt.Errorf("Error: failed to marshal RSSFeed contents to print - %v", err)
 	}
 	fmt.Printf("Debug: RSSFeed contents:\n%s\n", string(feedPrintout))
 	return nil
+}
+
+func convertRSSTime(pubDate string) (sql.NullTime, error) {
+	parsedTime, err := time.Parse(time.RFC1123Z, pubDate)
+	if err != nil {
+		parsedTime, err = time.Parse(time.RFC1123, pubDate)
+		if err != nil {
+			return sql.NullTime{Valid: false}, fmt.Errorf("Error: could not parse post published date - %n\n", err)
+		}
+	}
+	// TODO: bookmark June 20, 16:00
+	return sql.NullTime{Time: parsedTime, Valid: true}, nil
 }
