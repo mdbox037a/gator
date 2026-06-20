@@ -32,19 +32,19 @@ func handlerFollow(s *state, cmd command, user database.User) error {
 	if err != nil {
 		fmt.Errorf("Error: failed to marshal feed follow row for output - %v", err)
 	}
-	fmt.Printf("Feed '%s' now followed by user '%s'\n%s\n", feedFollow.FeedName, s.currentConfig.CurrentUserName, string(feedFollowContents))
+	fmt.Printf("Feed '%s' now followed by user '%s'\n%s\n", feedFollow.FeedName, user.Name, string(feedFollowContents))
 
 	return nil
 }
 
-func handlerFollowing(s *state, cmd command) error {
+func handlerFollowing(s *state, cmd command, user database.User) error {
 	ctx := context.Background()
-	followedFeeds, err := s.db.GetFeedFollowForUser(ctx, s.currentConfig.CurrentUserName)
+	followedFeeds, err := s.db.GetFeedFollowForUser(ctx, user.Name)
 	if err != nil {
-		return fmt.Errorf("Error: failed to get followed feeds for user %s - %v", s.currentConfig.CurrentUserName, err)
+		return fmt.Errorf("Error: failed to get followed feeds for user %s - %v", user.Name, err)
 	}
 
-	fmt.Printf("Feeds followed by user %s\n", s.currentConfig.CurrentUserName)
+	fmt.Printf("Feeds followed by user %s\n", user.Name)
 	for _, feed := range followedFeeds {
 		fmt.Printf("%s\n", feed.FeedName)
 	}
