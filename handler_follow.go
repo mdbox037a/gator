@@ -11,17 +11,13 @@ import (
 	"github.com/mdbox037a/gator/internal/database"
 )
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) == 0 {
 		return errors.New("Error: please provide a feed URL")
 	}
 	feedURL := cmd.Args[0]
 
 	ctx := context.Background()
-	user, err := s.db.GetUser(ctx, s.currentConfig.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("Error: failed to retrieve user from database - %v", err)
-	}
 	user_id := user.ID
 	feed_id, err := s.db.GetFeed(ctx, feedURL)
 	if err != nil {
