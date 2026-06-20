@@ -3,25 +3,25 @@ package main
 import (
 	"context"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"time"
-
-	"github.com/mdbox037a/gator/internal/database"
 )
 
 const feedURL string = "https://www.wagslane.dev/index.xml"
 
 func handlerAgg(s *state, cmd command) error {
-	ctx := context.Background()
-	feed, err := fetchFeed(ctx, feedURL)
-	if err != nil {
-		return fmt.Errorf("Error: failed to retrieve RSS feed from %s - %v", feedURL, err)
+	if len(cmd.Args) == 0 {
+		return errors.New("Error: please supply an update interval (for example 1s, 2m, 8h, etc...)")
 	}
-	feedContents, err := xml.MarshalIndent(feed, "", "    ")
-	if err != nil {
-		fmt.Errorf("Error: failed to marshal RSSFeed contents to print - %v", err)
+
+	time_between_reqs, _ := time.ParseDuration(cmd.Args[0])
+	fmt.Printf("Info: collecting RSS feeds every %v\n", time_between_reqs)
+	ticker := time.NewTicker(time_between_reqs)
+	for ; ; <-ticker.C {
+		scrapeFeeds(s)
 	}
-	fmt.Printf("Debug: RSSFeed contents:\n%s\n", string(feedContents))
+
 	return nil
 }
 
