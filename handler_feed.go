@@ -13,7 +13,7 @@ import (
 	"github.com/mdbox037a/gator/internal/database"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) < 2 {
 		return errors.New("Error: please provide a feed name and feed url")
 	}
@@ -27,12 +27,6 @@ func handlerAddFeed(s *state, cmd command) error {
 	}
 
 	ctx := context.Background()
-	user, err := s.db.GetUser(ctx, s.currentConfig.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("Error: failed to query user info for %s in database - %v", s.currentConfig.CurrentUserName, err)
-		// I suppose this shouldn't ever happen, because setting the user earlier will have failed first
-		// then again, maybe something has gone wrong in the DB in the meantime
-	}
 
 	feedArgs := database.CreateFeedParams{
 		ID:        uuid.New(),
