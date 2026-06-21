@@ -9,7 +9,7 @@ import (
 	"github.com/mdbox037a/gator/internal/database"
 )
 
-func browse(s *state, cmd command) error {
+func handlerBrowse(s *state, cmd command) error {
 	limit := 2
 	if len(cmd.Args) > 0 {
 		temp, err := strconv.Atoi(cmd.Args[0])
